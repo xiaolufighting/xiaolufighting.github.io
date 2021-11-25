@@ -81,7 +81,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.1k</span>
+            <span class="post-count">1.9k</span>
         </span>
     </span>
 
@@ -90,7 +90,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">7 min</span>
         </span>
     </span>
 </div>
@@ -146,6 +146,36 @@
 
 <p>结构rect包含两个point类型的成员。如果按照下列方式声明screen变量：以及引用screen成员pt1的x坐标。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rect</span> <span class="title">screen</span>;</span></span><br><span class="line">screen.pt1.x;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-2结构与函数"><a href="#6-2结构与函数" class="headerlink" title="6.2结构与函数"></a>6.2结构与函数</h2><p>结构的合法操作只有几种：作为一个整体复制和赋值，通过&amp;运算符取地址，访问其成员。</p>
+<p>其中，赋值和复制包括向函数传递参数以及从函数返回值。结构之间不可以进行比较。可以用一个常量成员值列表初始化结构，自动结构也可以通过赋值进行初始化。</p>
+<p>编写几个对点和矩阵进行操作的函数。至少可以通过三种可能的方法传递结构：一是分别传递各个结构成员；二是传递整个结构；三是传递指向结构的指针。</p>
+<p><u><strong>首先看函数makepoint，它带有两个整形参数，并返回一个point类型的结构：</strong></u></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*makepoint:make a point from x and y components 利用函数makepoint返回结构体变量temp*/</span></span><br><span class="line"><span class="function">struct point <span class="title">makepoint</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">point</span> <span class="title">temp</span>;</span></span><br><span class="line">    </span><br><span class="line">    temp.x=x;</span><br><span class="line">    temp.y=y;</span><br><span class="line">    <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意，参数名和结构成员同名不会引起冲突。事实上，使用重名可以强调两者之间的关系。</p>
+<p>现在可以使用makepoint函数动态地初始化任意结构，也可以向函数提供结构类型的参数。</p>
+<p>例如:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rect</span> <span class="title">screen</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> <span class="title">middle</span>;</span></span><br><span class="line"><span class="function">struct point <span class="title">makepoint</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">screen.pt1=makepoint(<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">screen.pt2=makepoint(XMAX,YMAX);</span><br><span class="line">middle=makepoint((screen.pt1.x+screen.pt2.x)/<span class="number">2</span>,(screen.pt1.y+screen.pt2.y)/<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>编写一系列的函数对点执行算术运算。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* addpoint:add two points */</span></span><br><span class="line"><span class="function">struct <span class="title">addpoint</span><span class="params">(struct point p1,struct point p2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    p1.x+=p2.x;</span><br><span class="line">    p1.y+=p2.y;</span><br><span class="line">    <span class="keyword">return</span> p1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，函数的参数和返回值都是结构类型。之所以直接将相加所得的结果赋值给p1，而没有使用显式的临时变量存储模式，是为了强调结构类型的参数和其他参数的类型一样，都是通过值传递的。</p>
+<p>下面来看另外一个例子。函数prinrect判断一个点是否在给定的矩形内部。矩形包括左侧和底边而不包括上侧和右侧。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* prinrect :return 1 if p in rect ,o or not*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ptinrect</span><span class="params">(struct point p,struct rect r)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> p.x &gt;= r.pt1.x &amp;&amp; p.x &lt; r.pt2.x&amp;&amp; p.y &gt;= r.pt1.y &amp;&amp; p.y &lt; r.pt2.y;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里假设矩形是用标准形式表示的，pt1小于pt2.</p>
+<p>下列函数将返回一个完成的矩形：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> min(a, b) ((a) &lt; (b) ? (a) : (b))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> max(a, b) ((a) &gt; (b) ? (a) : (b))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* canonrect: canonicalize coordinates of rectangle 就是使得pt1在坐标图中为pt2的左下方*/</span></span><br><span class="line"><span class="function">struct rect <span class="title">canonrect</span><span class="params">(struct rect r)</span></span></span><br><span class="line"><span class="function"></span>&#123; <span class="class"><span class="keyword">struct</span> <span class="title">rect</span> <span class="title">temp</span>;</span></span><br><span class="line"></span><br><span class="line"> temp.pt1.x = min(r.pt1.x, r.pt2.x); </span><br><span class="line"> temp.pt1.y = min(r.pt1.y, r.pt2.y); </span><br><span class="line"> temp.pt2.x = max(r.pt1.x, r.pt2.x);</span><br><span class="line"> temp.pt2.y = max(r.pt1.y, r.pt2.y); </span><br><span class="line"> <span class="keyword">return</span> temp;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果传递给函数的结构很大，使用指针方式的效率通常比复制整个结构的效率要高。结构指针类似于普通变量指针。</p>
+<p>声明如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> *<span class="title">pp</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>将pp定义为一个指向struct point 类型对象的指针。如果pp指向一个point结构，那么<em>pp即为该结构，（</em>pp).x和（*pp）.y则是结构成员。</p>
+<p>可以按照下例中的方式使用pp：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> <span class="title">origin</span>,*<span class="title">pp</span>;</span></span><br><span class="line">pp=&amp;origin;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;origin is %d%d\n&quot;</span>,(*pp).x,(*pp).y);</span><br></pre></td></tr></table></figure>
 
  
       <!-- reward -->
